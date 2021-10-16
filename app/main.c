@@ -3,5 +3,5 @@
 #include <fifo.h>
 
 int main(){
-    // user app
+    printf("Hello world!\n");
 }

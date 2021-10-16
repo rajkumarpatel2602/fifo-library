@@ -23,7 +23,7 @@ static bool is_fifo_empty(fifo_t fifo){
 /// Exposed to user
 fifo_t fifo_create_from_user_buffer(uint32_t nr_entry, uint32_t size, void *buf){
     fifo_t fifo = NULL;
-    if (nr_entry != 0){
+    if (nr_entry != 0 && size != 0){
         if(buf != NULL){
             fifo = (fifo_t)malloc(sizeof(struct _fifo_des));
             if (fifo != NULL){
@@ -41,7 +41,7 @@ fifo_t fifo_create_from_user_buffer(uint32_t nr_entry, uint32_t size, void *buf)
 
 fifo_t fifo_create(uint32_t nr_entry, uint32_t size){
     fifo_t fifo = NULL;
-    if (nr_entry != 0){
+    if (nr_entry != 0 && size != 0){
         fifo = (fifo_t)malloc(sizeof(struct _fifo_des));
         if (fifo != NULL){
             size_t buf_size = nr_entry * size;

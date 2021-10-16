@@ -17,8 +17,8 @@ fifo.o: fifo-lib/fifo.c
 main.o:	app/main.c
 	$(CC)  -c -I fifo-lib/ app/main.c -o build/main.o
 
-test:
-	$(CC) -fprofile-arcs -ftest-coverage -I test/ -I fifo-lib/ ut/*.c -o ut-fifo.out
+test: mkbuild libfifo.a
+	$(CC) -fprofile-arcs -ftest-coverage -I test/ -I fifo-lib/ ut/*.c -o ut-fifo.out -L . archive/libfifo.a
 
 check-coverage:
 	lcov -c -d . -o coverage.info

@@ -21,7 +21,7 @@ void Test_FifoCreate_WithZeroSize(CuTest *tc){
     CuAssertPtrEquals(tc, expected, testfifo);
 }
 
-void Test_FifoCreate_WithRightArgs(CuTest *tc){
+void Test_FifoCreate_WithRightConditions(CuTest *tc){
     uint32_t nr_entry = 10;
     uint32_t size = 4;
     fifo_t testfifo = NULL;
@@ -40,7 +40,7 @@ void Test_FifoEnqueue_WithNullData(CuTest *tc){
     CuAssertTrue(tc, !fifo_enqueue(testfifo, test_data_ptr));
 }
 
-void Test_FifoEnqueue_WithRightArgs(CuTest *tc){
+void Test_FifoEnqueue_WithRightConditions(CuTest *tc){
     uint32_t valid_nr_entry = 5;
     uint32_t valid_size = 4;
     int32_t data = 100;
@@ -51,44 +51,113 @@ void Test_FifoEnqueue_WithRightArgs(CuTest *tc){
     free(testfifo);
 }
 
-//void TestFifoEntryCount(){
-//
-//}
-//
-//void TestFifoDestroy(){
-//
-//}
-//
-//void TestFifoEntryCount(){
-//
-//}
-//
-//void TestFifoEnqueue(){
-//
-//}
-//
-//void TestFifoPeek(){
-//
-//}
-//
-//void TestFifoDequeue(){
-//
-//}
+void Test_FifoEnqueue_WhenFifoIsFull(CuTest *tc){
+    uint32_t valid_nr_entry = 1;
+    uint32_t valid_size = 4;
+    int32_t data = 100;
+    fifo_t testfifo = fifo_create(valid_nr_entry, valid_size);
+    CuAssertPtrNotNull(tc, testfifo);
+    CuAssertTrue(tc, fifo_enqueue(testfifo, &data));
+    data = 200;
+    CuAssertTrue(tc, !fifo_enqueue(testfifo, &data));
+    free(testfifo->ubuf);
+    free(testfifo);
+}
+
+void Test_FifoDequeue_WhenFifoIsEmpty(CuTest *tc){
+    uint32_t valid_nr_entry = 1;
+    uint32_t valid_size = 4;
+    int32_t popped_data;
+    fifo_t testfifo = fifo_create(valid_nr_entry, valid_size);
+    CuAssertPtrNotNull(tc, testfifo);
+    CuAssertTrue(tc, !fifo_dequeue(testfifo, &popped_data));
+    free(testfifo->ubuf);
+    free(testfifo);
+}
+
+void Test_FifoDequeue_WithRightConditions(CuTest *tc){
+    uint32_t valid_nr_entry = 2;
+    uint32_t valid_size = 4;
+    int32_t data = 100;
+    int32_t popped_data;
+    fifo_t testfifo = fifo_create(valid_nr_entry, valid_size);
+    CuAssertPtrNotNull(tc, testfifo);
+    CuAssertTrue(tc, fifo_enqueue(testfifo, &data));
+    data = 200;
+    CuAssertTrue(tc, fifo_enqueue(testfifo, &data));
+    CuAssertTrue(tc, fifo_dequeue(testfifo, &popped_data));
+    CuAssertIntEquals(tc, popped_data, 100);
+    CuAssertTrue(tc, fifo_dequeue(testfifo, &popped_data));
+    CuAssertIntEquals(tc, popped_data, 200);
+    free(testfifo->ubuf);
+    free(testfifo);
+}
+
+void Test_FifoIsEmpty_WithEmptyFifo(CuTest *tc){
+    uint32_t valid_nr_entry = 1;
+    uint32_t valid_size = 4;
+    fifo_t testfifo = fifo_create(valid_nr_entry, valid_size);
+    CuAssertPtrNotNull(tc, testfifo);
+    CuAssertTrue(tc, is_fifo_empty(testfifo));
+    free(testfifo->ubuf);
+    free(testfifo);
+}
+
+void Test_FifoIsEmpty_WithPartiallyFilledFifo(CuTest *tc){
+    uint32_t valid_nr_entry = 1;
+    uint32_t valid_size = 4;
+    int32_t data = 100;
+    fifo_t testfifo = fifo_create(valid_nr_entry, valid_size);
+    CuAssertPtrNotNull(tc, testfifo);
+    CuAssertTrue(tc, fifo_enqueue(testfifo, &data));
+    CuAssertTrue(tc, !is_fifo_empty(testfifo));
+    free(testfifo->ubuf);
+    free(testfifo);
+}
+
+
+void Test_FifoIsFull_WithFullFifo(CuTest *tc){
+    uint32_t valid_nr_entry = 2;
+    uint32_t valid_size = 4;
+    int32_t data = 100;
+    fifo_t testfifo = fifo_create(valid_nr_entry, valid_size);
+    CuAssertPtrNotNull(tc, testfifo);
+    CuAssertTrue(tc, fifo_enqueue(testfifo, &data));
+    data = 200;
+    CuAssertTrue(tc, fifo_enqueue(testfifo, &data));
+    CuAssertTrue(tc, is_fifo_full(testfifo));
+    free(testfifo->ubuf);
+    free(testfifo);
+}
+
+void Test_FifoIsFull_WithPartialllyFilledFifo(CuTest *tc){
+    uint32_t valid_nr_entry = 2;
+    uint32_t valid_size = 4;
+    int32_t data = 100;
+    fifo_t testfifo = fifo_create(valid_nr_entry, valid_size);
+    CuAssertPtrNotNull(tc, testfifo);
+    CuAssertTrue(tc, fifo_enqueue(testfifo, &data));
+    CuAssertTrue(tc, !is_fifo_full(testfifo));
+    free(testfifo->ubuf);
+    free(testfifo);
+}
 
 CuSuite* FifoGetSuite() {
     CuSuite* suite = CuSuiteNew();
-    //SUITE_ADD_TEST(suite, TestStrToUpper);
     SUITE_ADD_TEST(suite, Test_FifoCreate_WithZeroEntryCount);
     SUITE_ADD_TEST(suite, Test_FifoCreate_WithZeroSize);
-    SUITE_ADD_TEST(suite, Test_FifoCreate_WithRightArgs);
+    SUITE_ADD_TEST(suite, Test_FifoCreate_WithRightConditions);
     SUITE_ADD_TEST(suite, Test_FifoEnqueue_WithNullData);
-    SUITE_ADD_TEST(suite, Test_FifoEnqueue_WithRightArgs);
-    SUITE_ADD_TEST(suite, Test_FifoEnqueue_WithRightArgs);
-    SUITE_ADD_TEST(suite, Test_FifoEnqueue_WithRightArgs);
-    //SUITE_ADD_TEST(suite, TestFifoDestroy);
-    //SUITE_ADD_TEST(suite, TestFifoEnqueue);
-    //SUITE_ADD_TEST(suite, TestFifoDequeue);
-    //SUITE_ADD_TEST(suite, TestFifoPeek);
-    //SUITE_ADD_TEST(suite, TestFifoEntryCount);
+    SUITE_ADD_TEST(suite, Test_FifoEnqueue_WithRightConditions);
+    SUITE_ADD_TEST(suite, Test_FifoEnqueue_WhenFifoIsFull);
+    SUITE_ADD_TEST(suite, Test_FifoDequeue_WhenFifoIsEmpty);
+    SUITE_ADD_TEST(suite, Test_FifoDequeue_WithRightConditions);
+    SUITE_ADD_TEST(suite, Test_FifoIsEmpty_WithEmptyFifo);
+    SUITE_ADD_TEST(suite, Test_FifoIsEmpty_WithPartiallyFilledFifo);
+    SUITE_ADD_TEST(suite, Test_FifoIsFull_WithFullFifo);
+    SUITE_ADD_TEST(suite, Test_FifoIsFull_WithPartialllyFilledFifo);
+    //SUITE_ADD_TEST(suite, Test_FifoPeek_WithEmptyFifo);
+    //SUITE_ADD_TEST(suite, Test_FifoPeek_WithFullFifo);
+    //SUITE_ADD_TEST(suite, Test_FifoPeek_WithPartiallyFilledFifo);
     return suite;
 }

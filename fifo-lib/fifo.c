@@ -1,26 +1,6 @@
 #include <fifo.h>
 #include <stdint.h>
 
-/// Helper methods
-static bool is_fifo_full(fifo_t fifo){
-    bool ret = false;
-    if(fifo->filled_cnt >= fifo->ubuf_size){
-        printf("FIFO Is Full!\n");
-        ret = true;
-    }
-    return ret;
-}
-
-static bool is_fifo_empty(fifo_t fifo){
-    bool ret = false;
-    if(fifo->filled_cnt == 0){
-        printf("FIFO Is Empty!\n");
-        ret = true;
-    }
-    return ret;
-}
-
-/// Exposed to user
 fifo_t fifo_create_from_user_buffer(uint32_t nr_entry, uint32_t size, void *buf){
     fifo_t fifo = NULL;
     if (nr_entry != 0 && size != 0){
@@ -64,6 +44,12 @@ fifo_t fifo_create(uint32_t nr_entry, uint32_t size){
 
 bool fifo_enqueue(fifo_t fifo, void *data){
     bool ret = false;
+
+    if (data == NULL){
+        printf("Invalid data address!\n");
+        return false;
+    }
+
     if(!is_fifo_full(fifo)){
         memcpy((uint8_t *)fifo->ubuf + fifo->write_offset, data, fifo->entry_size);
         fifo->write_offset += fifo->entry_size;
@@ -108,3 +94,20 @@ uint32_t fifo_entry_cnt(fifo_t fifo){
     return cnt;
 }
 
+bool is_fifo_full(fifo_t fifo){
+    bool ret = false;
+    if(fifo->filled_cnt >= fifo->ubuf_size){
+        printf("FIFO Is Full!\n");
+        ret = true;
+    }
+    return ret;
+}
+
+bool is_fifo_empty(fifo_t fifo){
+    bool ret = false;
+    if(fifo->filled_cnt == 0){
+        printf("FIFO Is Empty!\n");
+        ret = true;
+    }
+    return ret;
+}

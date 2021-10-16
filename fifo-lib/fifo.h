@@ -77,7 +77,7 @@ bool fifo_peek(fifo_t fifo, void *data);
  * @param[in] fifo
  * @param[out] ret true if fifo is full.
  */
-static bool is_fifo_full(fifo_t fifo);
+bool is_fifo_full(fifo_t fifo);
 
 /**
  * API to Check if fifo is empty.
@@ -85,7 +85,7 @@ static bool is_fifo_full(fifo_t fifo);
  * @param[in] fifo
  * @param[out] ret true if fifo is empty
  */
-static bool is_fifo_empty(fifo_t fifo);
+bool is_fifo_empty(fifo_t fifo);
 
 /**
  * API to get number of entries in fifo.

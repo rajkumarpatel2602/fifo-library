@@ -6,7 +6,6 @@ void RunAllTests(void) {
     CuString *output = CuStringNew();
     CuSuite* suite = CuSuiteNew();
 
-    CuSuiteAddSuite(suite, StrUtilGetSuite());
     CuSuiteAddSuite(suite, FifoGetSuite());
 
     CuSuiteRun(suite);

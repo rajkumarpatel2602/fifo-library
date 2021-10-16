@@ -1,0 +1,12 @@
+# build files and folders
+*.out
+archive/*
+build/*
+
+# code coverage residual files
+*.gcda
+*.gcno
+
+# Libraries
+*.a
+

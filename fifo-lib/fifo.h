@@ -1,1 +1,90 @@
-// Fifo header file
+///@file fifo.h
+
+#ifndef __FIFO_H__
+#define __FIFO_H__
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+/*! fifo data structure */
+struct fifo_des{
+    void *ubuf;             /*!< buffer to hold user data */
+    size_t ubuf_size;       /*!< size of ubuf in bytes */
+    size_t nr_entry;        /*!< number or entries in fifo */
+    size_t entry_size;      /*!< size of a fifo entry */
+    unit8_t *write_offset;  /*!< write offset to add an entry */
+    unit8_t *read_offset;   /*!< read offset to read and entry */
+    unit32_t *filled_cnt;   /*!< number of used bytes in ubuf */
+};
+
+/// Typedef for pointer to fifo descriptor
+typedef fifo_des *fifo_t;
+
+/**
+ * API to create a fifo with user allocated buffer for
+ * data sotrage.
+ *
+ * @param[in] nr_entry
+ * @param[in] size
+ * @param[in] buf
+ * @param[out] fifo a pointer to fifo datastructure on success else NULL.
+ */
+fifo_t fifo_create_from_user_buffer(uint32_t nr_entry, uint32_t size, void *buf);
+
+/**
+ * API to create a fifo of given number of elements 
+ * and size.
+ *
+ * @param[in] nr_entry
+ * @param[in] size
+ * @param[out] fifo a pointer to fifo datastructure on success else NULL.
+ */
+fifo_t fifo_create(uint32_t nr_entry, uint32_t size);
+
+/**
+ * API to push an entry to fifo.
+ *
+ * @param[in] fifo
+ * @param[in] data
+ * @param[out] ret true if entry is pushed to fifo.
+ */
+bool fifo_enqueue(fifo_t fifo, void *data);
+
+/**
+ * API to pop a fifo entry.
+ *
+ * @param[in] fifo
+ * @param[in] data
+ * @param[out] ret true if an entry is popped and copied to data.
+ */
+bool fifo_dequeue(fifo_t fifo, void *data);
+
+/**
+ * API to get data of very first entry available 
+ * to dequeue.
+ *
+ * @param[in] fifo
+ * @param[in] data
+ * @param[out] ret true if entry is read and copied to data.
+ */
+bool fifo_peek(fifo_t fifo, void *data);
+
+/**
+ * API to check if fifo is full.
+ *
+ * @param[in] fifo
+ * @param[out] ret true if fifo is full.
+ */
+static bool is_fifo_full(fifo_t fifo);
+
+/**
+ * API to Check if fifo is empty.
+ *
+ * @param[in] fifo
+ * @param[out] ret true if fifo is empty
+ */
+static bool is_fifo_empty(fifo_t fifo);
+
+#endif

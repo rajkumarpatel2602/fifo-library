@@ -20,7 +20,7 @@ main.o:	app/main.c
 test: clean mkbuild libfifo.a
 	$(CC) -fprofile-arcs -ftest-coverage -I test/ -I fifo-lib/ ut/*.c -o ut-fifo.out -L . archive/libfifo.a
 
-check-coverage:
+test-coverage:
 	lcov -c -d . -o coverage.info
 	lcov -r coverage.info '*/AllTests*' '*/CuTest*' -o coverage-filtered.info
 	genhtml coverage-filtered.info -o coverage

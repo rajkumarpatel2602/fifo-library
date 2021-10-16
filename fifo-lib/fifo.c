@@ -79,7 +79,7 @@ bool fifo_dequeue(fifo_t fifo, void *data){
 bool fifo_peek(fifo_t fifo, void *data){
     bool ret = false;
     if(!is_fifo_empty(fifo)){
-        memcpy(data, fifo->read_offset, fifo->entry_size);
+        memcpy(data, fifo->ubuf + fifo->read_offset, fifo->entry_size);
         ret = true;
     }
     return ret;

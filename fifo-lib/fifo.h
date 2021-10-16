@@ -9,15 +9,15 @@
 #include <stdbool.h>
 
 /*! fifo data structure */
-struct fifo_des{
+typedef struct _fifo_des{
     void *ubuf;             /*!< buffer to hold user data */
     size_t ubuf_size;       /*!< size of ubuf in bytes */
     size_t nr_entry;        /*!< number or entries in fifo */
     size_t entry_size;      /*!< size of a fifo entry */
-    unit8_t *write_offset;  /*!< write offset to add an entry */
-    unit8_t *read_offset;   /*!< read offset to read and entry */
-    unit32_t *filled_cnt;   /*!< number of used bytes in ubuf */
-};
+    uint8_t write_offset;  /*!< write offset to add an entry */
+    uint8_t read_offset;   /*!< read offset to read and entry */
+    uint32_t filled_cnt;   /*!< number of used bytes in ubuf */
+}fifo_des;
 
 /// Typedef for pointer to fifo descriptor
 typedef fifo_des *fifo_t;

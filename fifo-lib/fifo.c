@@ -63,7 +63,6 @@ fifo_t fifo_create(uint32_t nr_entry, uint32_t size){
 }
 
 bool fifo_enqueue(fifo_t fifo, void *data){
-    printf("Inside Enqueue!\n");
     bool ret = false;
     if(!is_fifo_full(fifo)){
         memcpy((uint8_t *)fifo->ubuf + fifo->write_offset, data, fifo->entry_size);
@@ -99,3 +98,13 @@ bool fifo_peek(fifo_t fifo, void *data){
     }
     return ret;
 }
+
+
+uint32_t fifo_entry_cnt(fifo_t fifo){
+    uint32_t cnt = 0;
+    if(fifo && fifo->nr_entry){
+        cnt = (fifo->filled_cnt / fifo->nr_entry);
+    }
+    return cnt;
+}
+

@@ -87,4 +87,12 @@ static bool is_fifo_full(fifo_t fifo);
  */
 static bool is_fifo_empty(fifo_t fifo);
 
+/**
+ * API to get number of entries in fifo.
+ *
+ * @param[in] fifo
+ * @param[out] ret count of entries present in fifo.
+ */
+uint32_t fifo_entry_cnt(fifo_t fifo);
+
 #endif

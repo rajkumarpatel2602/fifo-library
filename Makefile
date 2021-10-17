@@ -17,13 +17,15 @@ fifo.o: fifo-lib/fifo.c
 main.o:	app/main.c
 	$(CC)  -c -I fifo-lib/ app/main.c -o build/main.o
 
-test: clean mkbuild libfifo.a
-	$(CC) -fprofile-arcs -ftest-coverage -I test/ -I fifo-lib/ ut/*.c -o ut-fifo.out -L . archive/libfifo.a
+#test: clean mkbuild libfifo.a
+test: clean mkbuild
+	#$(CC) -fprofile-arcs -ftest-coverage -I test/ -I fifo-lib/ ut/*.c -o ut-fifo.out -L . archive/libfifo.a
+	$(CC) -fprofile-arcs -ftest-coverage -I ut/ -I fifo-lib/ ut/*.c fifo-lib/fifo.c -o ut-fifo.out
 
 test-coverage:
 	lcov -c -d . -o coverage.info
 	lcov -r coverage.info '*/AllTests*' '*/CuTest*' -o coverage-filtered.info
-	genhtml coverage-filtered.info -o coverage
+	genhtml -s coverage-filtered.info -o coverage
 
 clean:
 	rm -rf build archive

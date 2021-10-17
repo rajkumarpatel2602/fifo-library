@@ -1,4 +1,4 @@
-#include "CuTest.h"
+#include <CuTest.h>
 #include <fifo.h>
 #include <stddef.h>
 
@@ -39,12 +39,70 @@ void Test_FifoCreate_WithRightConditions(CuTest *tc){
     free(testfifo);
 }
 
+void Test_FifoCreateWithUserBuffer_WithZeroEntryCount(CuTest *tc){
+    uint32_t nr_entry = NR_INVALID_ENTRY, size = EXAMPLE_ENTRY_SIZE;
+    int32_t UserArr[NR_MAX_POSSIBLE_ENTRY * EXAMPLE_ENTRY_SIZE] = {0};
+    fifo_t testfifo = NULL;
+    testfifo = fifo_create_from_user_buffer(nr_entry, size, UserArr);
+    fifo_t *expected = NULL;
+    CuAssertPtrEquals(tc, expected, testfifo);
+    free(testfifo);
+}
+
+void Test_FifoCreateWithUserBuffer_WithZeroSize(CuTest *tc){
+    uint32_t nr_entry = NR_MAX_POSSIBLE_ENTRY, size = INVALID_ENTRY_SIZE;
+    int32_t UserArr[NR_MAX_POSSIBLE_ENTRY * EXAMPLE_ENTRY_SIZE] = {0};
+    fifo_t testfifo = NULL;
+    testfifo = fifo_create_from_user_buffer(nr_entry, size, UserArr);
+    fifo_t *expected = NULL;
+    CuAssertPtrEquals(tc, expected, testfifo);
+    free(testfifo);
+}
+
+void Test_FifoCreateWithUserBuffer_WithRightConditions(CuTest *tc){
+    uint32_t nr_entry = NR_MAX_POSSIBLE_ENTRY, size = EXAMPLE_ENTRY_SIZE;
+    int32_t UserArr[NR_MAX_POSSIBLE_ENTRY * EXAMPLE_ENTRY_SIZE] = {0};
+    fifo_t testfifo = NULL;
+    testfifo = fifo_create_from_user_buffer(nr_entry, size, UserArr);
+    CuAssertPtrNotNull(tc, testfifo);
+    free(testfifo);
+}
+
+void Test_FifoPresentEntries_WithDynamicBuffer(CuTest *tc){
+    uint32_t nr_entry = NR_MAX_POSSIBLE_ENTRY, size = EXAMPLE_ENTRY_SIZE, i;
+    int32_t data = EXAMPLE_DATA_VAL;
+    fifo_t testfifo = NULL;
+    testfifo = fifo_create(nr_entry, size);
+    CuAssertPtrNotNull(tc, testfifo);
+    for(i=0; i<NR_MAX_POSSIBLE_ENTRY; i++, data++){
+        CuAssertTrue(tc, fifo_enqueue(testfifo, &data));
+    }
+    CuAssertIntEquals(tc, fifo_present_entries(testfifo), NR_MAX_POSSIBLE_ENTRY);
+    free(testfifo->ubuf);
+    free(testfifo);
+}
+
+void Test_FifoPresentEntries_WithUserBuffer(CuTest *tc){
+    uint32_t nr_entry = NR_MAX_POSSIBLE_ENTRY, size = EXAMPLE_ENTRY_SIZE, i;
+    int32_t UserArr[NR_MAX_POSSIBLE_ENTRY * EXAMPLE_ENTRY_SIZE] = {0};
+    int32_t data = EXAMPLE_DATA_VAL;
+    fifo_t testfifo = NULL;
+    testfifo = fifo_create_from_user_buffer(nr_entry, size, UserArr);
+    CuAssertPtrNotNull(tc, testfifo);
+    for(i=0; i<NR_MAX_POSSIBLE_ENTRY; i++, data++){
+        CuAssertTrue(tc, fifo_enqueue(testfifo, &data));
+    }
+    CuAssertIntEquals(tc, fifo_present_entries(testfifo), NR_MAX_POSSIBLE_ENTRY);
+    free(testfifo);
+}
+
 void Test_FifoEnqueue_WithNullData(CuTest *tc){
     uint32_t valid_nr_entry = NR_MAX_POSSIBLE_ENTRY, valid_size = EXAMPLE_ENTRY_SIZE;
     fifo_t testfifo = fifo_create(valid_nr_entry, valid_size);
     CuAssertPtrNotNull(tc, testfifo);
     int *test_data_ptr = NULL;
     CuAssertTrue(tc, !fifo_enqueue(testfifo, test_data_ptr));
+    free(testfifo);
 }
 
 void Test_FifoEnqueue_WithRightConditions(CuTest *tc){
@@ -190,6 +248,12 @@ CuSuite* FifoGetSuite() {
     SUITE_ADD_TEST(suite, Test_FifoCreate_WithZeroEntryCount);
     SUITE_ADD_TEST(suite, Test_FifoCreate_WithZeroSize);
     SUITE_ADD_TEST(suite, Test_FifoCreate_WithRightConditions);
+    SUITE_ADD_TEST(suite, Test_FifoCreateWithUserBuffer_WithZeroEntryCount);
+    SUITE_ADD_TEST(suite, Test_FifoCreateWithUserBuffer_WithZeroSize);
+    SUITE_ADD_TEST(suite, Test_FifoCreateWithUserBuffer_WithRightConditions);
+    SUITE_ADD_TEST(suite, Test_FifoPresentEntries_WithDynamicBuffer);
+    SUITE_ADD_TEST(suite, Test_FifoPresentEntries_WithUserBuffer);
+    SUITE_ADD_TEST(suite, Test_FifoCreateWithUserBuffer_WithRightConditions);
     SUITE_ADD_TEST(suite, Test_FifoEnqueue_WithNullData);
     SUITE_ADD_TEST(suite, Test_FifoEnqueue_WithRightConditions);
     SUITE_ADD_TEST(suite, Test_FifoEnqueue_WhenFifoIsFull);

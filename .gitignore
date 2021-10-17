@@ -6,6 +6,7 @@ build/*
 # code coverage residual files
 *.gcda
 *.gcno
+*.info
 
 # Libraries
 *.a

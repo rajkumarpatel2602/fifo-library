@@ -27,7 +27,7 @@ fifo_t fifo_create(uint32_t nr_entry, uint32_t size){
             size_t buf_size = nr_entry * size;
             fifo->ubuf  = (void *)malloc(buf_size);
             if(fifo->ubuf == NULL){
-                printf("Malloc failed!\n");
+                printf("Buffer Malloc Failed!\n");
                 free(fifo);
             }else{
                 fifo->ubuf_size = buf_size;
@@ -86,10 +86,10 @@ bool fifo_peek(fifo_t fifo, void *data){
 }
 
 
-uint32_t fifo_entry_cnt(fifo_t fifo){
+uint32_t fifo_present_entries(fifo_t fifo){
     uint32_t cnt = 0;
     if(fifo && fifo->nr_entry){
-        cnt = (fifo->filled_cnt / fifo->nr_entry);
+        cnt = (uint32_t)(fifo->filled_cnt / fifo->nr_entry);
     }
     return cnt;
 }
